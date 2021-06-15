@@ -58,7 +58,7 @@ class Controller extends BaseController
     }
 
     public function getUsersAuth(){
-        $data = AuthUser::select('auth_name')->get();
+        $data = AuthUser::select('users_auth')->get();
         return response()->json(['data' => $data]);
     }
 }
