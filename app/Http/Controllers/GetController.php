@@ -12,4 +12,8 @@ class GetController extends Controller
         $getPointsUser = DB::table('points')->sum('points');
         return response()->json(['data' => $getPointsUser]);
     }
+
+    public function getUserAuth(){
+
+    }
 }
