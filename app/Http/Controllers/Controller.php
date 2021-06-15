@@ -50,7 +50,7 @@ class Controller extends BaseController
         $data = json_decode($request->param);
 
         $authUser = new AuthUser;
-        $authUser->name = json_encode($data);
+        $authUser->users_auth = $request->param;
         $authUser->save();
 
         return response()->json(['data' => $data]);
