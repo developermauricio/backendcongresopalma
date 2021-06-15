@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\AuthUser;
 use App\Point;
+use App\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -25,13 +26,19 @@ class Controller extends BaseController
     {
         $success = true;
         $poinst = $request->points;
+        $email = $request->email;
         $click = $request->idClick;
+
+       $currentUser = User::whereEmail($email)->first();
+       if (!$currentUser){
+           return response()->json('No se encuentra el usuario en la base de datos');;
+       }
 
         DB::beginTransaction();
         try {
             $setPoints = new Point;
             $setPoints->points = $poinst;
-            $setPoints->user_id = 1;
+            $setPoints->user_id = $currentUser->id;
             $setPoints->click_id = $click;
             $setPoints->save();
         } catch (\Exception $exception) {
@@ -66,6 +73,13 @@ class Controller extends BaseController
         return response()->json([
             'data' => $data,
             'msg' => $msg
+        ]);
+    }
+
+    public function setLoginUser(Request $request){
+        $currentEmail = $request->email;
+        return response()->json([
+            'data' => $currentEmail
         ]);
     }
 
