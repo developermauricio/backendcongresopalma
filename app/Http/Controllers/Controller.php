@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AuthUser;
+use App\LoginUser;
 use App\Point;
 use App\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -76,11 +77,35 @@ class Controller extends BaseController
         ]);
     }
 
-    public function setLoginUser(Request $request){
+    public function setLoginUser(Request $request)
+    {
         $currentEmail = $request->email;
-        return response()->json([
-            'data' => $currentEmail
-        ]);
+        $currentUser = User::whereEmail($currentEmail)->first();
+        $success = true;
+        Log::debug($currentEmail);
+
+        if (!$currentUser){
+            return response()->json('No se encuentra el usuario en la base de datos');;
+        }
+        DB::beginTransaction();
+        try {
+            $user = new LoginUser;
+            $user->name = $currentUser->name;
+            $user->email = $currentUser->email;
+            $user->user_id = $currentUser->id;
+            $user->save();
+
+        } catch (\Exception $exception) {
+            $success = $exception->getMessage();
+            DB::rollBack();
+        }
+
+        if ($success === true) {
+            DB::commit();
+            return response()->json('La transacción se ha realizado exitosamente');
+        } else {
+            return response()->json('Error al realizar la transaccion', 500);
+        }
     }
 
     public function getUsersAuth()
