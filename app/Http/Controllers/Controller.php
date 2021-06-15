@@ -47,16 +47,18 @@ class Controller extends BaseController
     }
 
     public function setUserAuth(Request $request){
-        $data = json_decode($request->param);
+        /*$data = json_decode($request->param);*/
+        $data = json_decode($request);
 
-        $authUser = new AuthUser;
-        $authUser->users_auth = $request->param;
-        $authUser->save();
+//        $authUser = new AuthUser;
+//        $authUser->users_auth = $request->param;
+//        $authUser->save();
 
         return response()->json(['data' => $data]);
     }
 
-    public function getUsersAuth($users){
-        return $users;
+    public function getUsersAuth(){
+        $data = AuthUser::select('auth_name')->get();
+        return response()->json(['data' => $data]);
     }
 }
