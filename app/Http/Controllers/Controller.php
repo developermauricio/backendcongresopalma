@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AuthUser;
 use App\Point;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -47,6 +48,11 @@ class Controller extends BaseController
 
     public function setUserAuth(Request $request){
         $data = json_decode($request->users);
+
+        $authUser = new AuthUser;
+        $authUser->name = $data;
+        $authUser->save();
+        
         return response()->json(['data' => $data]);
     }
 
