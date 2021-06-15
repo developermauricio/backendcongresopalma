@@ -47,7 +47,6 @@ class Controller extends BaseController
 
     public function setUserAuth(Request $request){
         $data = json_decode($request->users);
-        $this->getUsersAuth($data);
         return response()->json(['data' => $data]);
     }
 
