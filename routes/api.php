@@ -22,4 +22,6 @@ Route::post('/set-points', 'Controller@setPoints')->name('api.set.points');
 Route::post('/set-users-auth', 'Controller@setUserAuth')->name('api.set.user.auth');
 
 Route::get('/get-points-user', 'GetController@getPointsUser')->name('api.get.poinst.user');
+Route::get('/get-users-auth', 'GetController@getPointsUser')->name('api.get.poinst.user');
+
 
