@@ -53,21 +53,20 @@ class Controller extends BaseController
         /*$data = json_decode($request->param);*/
         $data = json_decode($request->param);
         $userAuth = AuthUser::select('users_auth')->first();
-        $userAuth->users_auth = $request->param;
-        $userAuth->save();
-//        if ($userAuth) {
-//
-//            $authUser = new AuthUser;
-//            $authUser->users_auth = $request->param;
-//            $authUser->update();
-//        } else {
-//            $authUser = new AuthUser;
-//            $authUser->users_auth = $request->param;
-//            $authUser->save();
-//        }
-
-
-        return response()->json(['data' => $data]);
+        $msg = '';
+        if ($userAuth) {
+            AuthUser::where('id', 1)->update(['users_auth' => $request->param]);
+            $msg = 'UPDATE';
+        } else {
+            $authUser = new AuthUser;
+            $authUser->users_auth = $request->param;
+            $authUser->save();
+            $msg = 'NEW';
+        }
+        return response()->json([
+            'data' => $data,
+            'msg' => $msg
+        ]);
     }
 
     public function getUsersAuth()
