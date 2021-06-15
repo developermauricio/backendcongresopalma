@@ -19,7 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/set-points', 'Controller@setPoints')->name('api.set.points');
-Route::get('/set-users-auth', 'Controller@setUserAuth')->name('api.set.user.auth');
+Route::post('/set-users-auth', 'Controller@setUserAuth')->name('api.set.user.auth');
 
 Route::get('/get-points-user', 'GetController@getPointsUser')->name('api.get.poinst.user');
 
