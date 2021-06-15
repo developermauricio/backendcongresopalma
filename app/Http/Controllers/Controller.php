@@ -45,6 +45,6 @@ class Controller extends BaseController
     }
 
     public function setUserAuth(Request $request){
-        return 'ok';
+        return $request;
     }
 }
