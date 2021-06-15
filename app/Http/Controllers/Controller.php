@@ -47,6 +47,11 @@ class Controller extends BaseController
 
     public function setUserAuth(Request $request){
         $data = json_decode($request->param);
-        return response()->json(['data' => $data]);
+        $email = 'email';
+        foreach ($data as $d){
+           $email = $d->email;
+           break;
+        }
+        return response()->json(['data' => $email]);
     }
 }
