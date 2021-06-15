@@ -15,7 +15,7 @@ class CreateAuthUsersTable extends Migration
     {
         Schema::create('auth_users', function (Blueprint $table) {
             $table->id();
-            $table->json('users_auth')->nullable();
+            $table->text('users_auth')->nullable();
             $table->timestamps();
         });
     }
