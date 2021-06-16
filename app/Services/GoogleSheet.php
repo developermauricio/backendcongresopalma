@@ -4,18 +4,16 @@
 namespace App\Services;
 
 
-use Illuminate\Support\Facades\Log;
-
 class GoogleSheet
 {
-    private $spreadSheetId;
+//    private $spreadSheetId;
     private $client;
     private $googleSheetService;
 
 
     public function __construct()
     {
-        $this->spreadSheetId = config('datastudio.google_sheet_id');
+//        $this->spreadSheetId = config('datastudio.google_sheet_id');
 
         $this->client = new \Google_Client();
         $this->client->setAuthConfig(storage_path('credentials.json'));
@@ -24,14 +22,14 @@ class GoogleSheet
         $this->googleSheetService = new \Google_Service_Sheets($this->client);
     }
 
-    public function readGoogleSheet()
-    {
-        $dimensions = $this->getDimensions($this->spreadSheetId);
-        dd($dimensions);
-    }
+//    public function readGoogleSheet()
+//    {
+//        $dimensions = $this->getDimensions($spreadSheetId);
+//        dd($dimensions);
+//    }
 
-    public function saveDataToSheet(array $data, $book){
-        $dimensions = $this->getDimensions($this->spreadSheetId, $book);
+    public function saveDataToSheet(array $data, $spreadSheetId, $nameSheet){
+        $dimensions = $this->getDimensions($spreadSheetId, $nameSheet);
 
         $body = new \Google_Service_Sheets_ValueRange([
            'values' => $data
@@ -43,16 +41,14 @@ class GoogleSheet
         $range = "A" . ($dimensions['rowCount'] + 1);
         return  $this->googleSheetService
             ->spreadsheets_values
-            ->update($this->spreadSheetId, $range, $body, $params);
+            ->update($spreadSheetId, $range, $body, $params);
     }
 
-    private function getDimensions($spreadSheetId, $book)
+    private function getDimensions($spreadSheetId, $nameSheet)
     {
-        $bookSheet = 'UsuariosAuth!A:A';
-        Log::debug($bookSheet);
         $rowDimensions = $this->googleSheetService->spreadsheets_values->batchGet(
             $spreadSheetId,
-            ['ranges' => 'UsuariosAuth!A:A', 'majorDimension' => 'COLUMNS']
+            ['ranges' => $nameSheet.'!A:A', 'majorDimension' => 'COLUMNS']
         );
 
         //if data is present at nth row, it will return array till nth row
@@ -67,7 +63,7 @@ class GoogleSheet
 
         $colDimensions = $this->googleSheetService->spreadsheets_values->batchGet(
             $spreadSheetId,
-            ['ranges' => 'UsuariosAuth!1:1', 'majorDimension' => 'ROWS']
+            ['ranges' => $nameSheet.'!1:1', 'majorDimension' => 'ROWS']
         );
 
         //if data is present at nth col, it will return array till nth col

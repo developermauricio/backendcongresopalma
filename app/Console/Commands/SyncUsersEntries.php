@@ -67,7 +67,11 @@ class SyncUsersEntries extends Command
             $lastId = $row->id;
         }
 
-        $googleSheet->saveDataToSheet($finalData->toArray(), env('USUARIOS_REGISTRADOS_LIBRO'));
+        $googleSheet->saveDataToSheet(
+            $finalData->toArray(),
+            '1yMSMnI2Q6xfBc91SwXGSOGKtAZbWiFaTwulvg9CUFZ0',
+            'Usuarios_Registrados'
+        );
         $variable->value = $lastId;
         $variable->save();
 
