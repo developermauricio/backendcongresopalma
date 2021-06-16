@@ -22,7 +22,7 @@ Route::post('/set-points', 'Controller@setPoints')->name('api.set.points');
 Route::post('/set-users-auth', 'Controller@setUserAuth')->name('api.set.user.auth');
 Route::post('/set-login-user', 'Controller@setLoginUser')->name('api.set.login.user');
 
-Route::get('/get-points-user', 'GetController@getPointsUser')->name('api.get.poinst.user');
+Route::get('/get-points-user/{email}', 'GetController@getPointsUser')->name('api.get.poinst.user');
 Route::get('/get-users-auth', 'GetController@getUsersAuth')->name('api.get.auth.user');
 
 
