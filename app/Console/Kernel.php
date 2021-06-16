@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\SyncLoginUsersEntries;
 use App\Console\Commands\SyncUsersEntries;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -14,7 +15,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        SyncUsersEntries::class
+        SyncUsersEntries::class,
+        SyncLoginUsersEntries::class,
     ];
 
     /**
@@ -27,6 +29,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('sync:usersentries')->everyMinute()->withoutOverlapping();
+        $schedule->command('sync:loginuser')->everyMinute()->withoutOverlapping();
     }
 
     /**

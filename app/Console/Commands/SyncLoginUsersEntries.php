@@ -14,14 +14,14 @@ class SyncLoginUsersEntries extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'sync:loginuser';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Este comando permite sincronizar la tabla de loginUser con el libro de Usuarios Libros de google sheet';
 
     /**
      * Create a new command instance.
