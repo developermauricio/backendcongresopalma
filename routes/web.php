@@ -13,6 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function (\App\Services\GoogleSheet $googleSheet) {
+    $values = [
+      [4, 'Mauricio', 'mauricio@gmail.com']
+    ];
+    $savedData = $googleSheet->saveDataToSheet($values);
+    dump($savedData);
+   dd($googleSheet->readGoogleSheet());
     return view('welcome');
 });

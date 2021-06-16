@@ -128,10 +128,4 @@ class Controller extends BaseController
         }
     }
 
-    public function getUsersAuth()
-    {
-        $data = AuthUser::select('users_auth')->first();
-        $jsoData = json_decode($data->users_auth);
-        return response()->json($jsoData);
-    }
 }
