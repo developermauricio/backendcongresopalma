@@ -48,11 +48,11 @@ class GoogleSheet
 
     private function getDimensions($spreadSheetId, $book)
     {
-        $bookSheet = 'Usuarios_Auth!A:A';
+        $bookSheet = 'UsuariosAuth!A:A';
         Log::debug($bookSheet);
         $rowDimensions = $this->googleSheetService->spreadsheets_values->batchGet(
             $spreadSheetId,
-            ['ranges' => 'Usuarios_Auth!A:A', 'majorDimension' => 'COLUMNS']
+            ['ranges' => 'UsuariosAuth!A:A', 'majorDimension' => 'COLUMNS']
         );
 
         //if data is present at nth row, it will return array till nth row
@@ -67,7 +67,7 @@ class GoogleSheet
 
         $colDimensions = $this->googleSheetService->spreadsheets_values->batchGet(
             $spreadSheetId,
-            ['ranges' => 'Usuarios_Auth!1:1', 'majorDimension' => 'ROWS']
+            ['ranges' => 'UsuariosAuth!1:1', 'majorDimension' => 'ROWS']
         );
 
         //if data is present at nth col, it will return array till nth col
