@@ -21,6 +21,11 @@ class VariableTableSeeder extends Seeder
         $variable->name = 'LastLoginUsersEntriesIDSync';
         $variable->value = 0;
         $variable->save();
+
+        $variable = new \App\Variable;
+        $variable->name = 'LastPointsIDSync';
+        $variable->value = 0;
+        $variable->save();
     }
 }
 

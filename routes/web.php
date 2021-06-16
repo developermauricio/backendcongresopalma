@@ -1,5 +1,6 @@
 <?php
 
+use App\Point;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,4 +22,17 @@ Route::get('/', function (\App\Services\GoogleSheet $googleSheet) {
     dump($savedData);
    dd($googleSheet->readGoogleSheet());
     return view('welcome');
+});
+
+Route::get('/api-get', function (){
+    $p = Point::query()
+        ->where('id', '>', 0)
+        ->with('user')
+        ->orderBy('id')
+        ->limit(10)
+        ->get();
+
+    return $p;
+//        ->where('id', '>', $variable->value)
+
 });
