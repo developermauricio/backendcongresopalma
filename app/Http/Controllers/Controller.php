@@ -83,7 +83,6 @@ class Controller extends BaseController
     {
         $currentEmail = $request->email;
         $currentUser = User::whereEmail($currentEmail)->first();
-        $success = true;
         Log::debug($currentEmail);
 
         if (!$currentUser) {
@@ -108,6 +107,7 @@ class Controller extends BaseController
     }
 
     public function insertLoginUser($currentUser){
+        $success = true;
         try {
             $user = new LoginUser;
             $user->name = $currentUser->name;
