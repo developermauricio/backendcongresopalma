@@ -17,6 +17,7 @@ class CreateClicksTable extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->text('description')->nullable();
+            $table->integer('points')->nullable();;
             $table->timestamps();
         });
     }

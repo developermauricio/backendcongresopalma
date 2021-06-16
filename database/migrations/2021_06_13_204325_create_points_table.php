@@ -20,6 +20,7 @@ class CreatePointsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedBigInteger('click_id')->unsigned();
             $table->foreign('click_id')->references('id')->on('clicks');
+            $table->string('click_name')->nullable();
             $table->timestamps();
         });
     }
