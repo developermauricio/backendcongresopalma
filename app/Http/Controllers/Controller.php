@@ -6,6 +6,8 @@ use App\AuthUser;
 use App\LoginUser;
 use App\Point;
 use App\User;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -30,10 +32,10 @@ class Controller extends BaseController
         $email = $request->email;
         $click = $request->idClick;
 
-       $currentUser = User::whereEmail($email)->first();
-       if (!$currentUser){
-           return response()->json('No se encuentra el usuario en la base de datos');;
-       }
+        $currentUser = User::whereEmail($email)->first();
+        if (!$currentUser) {
+            return response()->json('No se encuentra el usuario en la base de datos');;
+        }
 
         DB::beginTransaction();
         try {
@@ -84,10 +86,28 @@ class Controller extends BaseController
         $success = true;
         Log::debug($currentEmail);
 
-        if (!$currentUser){
+        if (!$currentUser) {
             return response()->json('No se encuentra el usuario en la base de datos');;
         }
         DB::beginTransaction();
+
+        $logiUserIsset = LoginUser::whereEmail($currentEmail)->first();
+        if ($logiUserIsset) {
+            $created_at = $logiUserIsset->created_at;
+            $dateNow = Carbon::now();
+            $created_at = new Carbon($created_at);
+
+            if ($dateNow->dayOfYear !== $created_at->dayOfYear){
+                $this->insertLoginUser($currentUser);
+            }
+
+        } else {
+
+            $this->insertLoginUser($currentUser);
+        }
+    }
+
+    public function insertLoginUser($currentUser){
         try {
             $user = new LoginUser;
             $user->name = $currentUser->name;
