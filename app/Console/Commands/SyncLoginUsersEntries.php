@@ -68,7 +68,7 @@ class SyncLoginUsersEntries extends Command
             $lastId = $row->id;
         }
 
-        $googleSheet->saveDataToSheet($finalData->toArray(), "Usuarios Auth");
+        $googleSheet->saveDataToSheet($finalData->toArray(), "Usuarios_Auth");
         $variable->value = $lastId;
         $variable->save();
 
