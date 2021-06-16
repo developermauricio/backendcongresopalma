@@ -28,8 +28,8 @@ class GoogleSheet
         dd($dimensions);
     }
 
-    public function saveDataToSheet(array $data){
-        $dimensions = $this->getDimensions($this->spreadSheetId);
+    public function saveDataToSheet(array $data, $book){
+        $dimensions = $this->getDimensions($this->spreadSheetId, $book);
 
         $body = new \Google_Service_Sheets_ValueRange([
            'values' => $data
@@ -44,11 +44,11 @@ class GoogleSheet
             ->update($this->spreadSheetId, $range, $body, $params);
     }
 
-    private function getDimensions($spreadSheetId)
+    private function getDimensions($spreadSheetId, $book)
     {
         $rowDimensions = $this->googleSheetService->spreadsheets_values->batchGet(
             $spreadSheetId,
-            ['ranges' => 'Hoja1!A:A', 'majorDimension' => 'COLUMNS']
+            ['ranges' => $book.'!A:A', 'majorDimension' => 'COLUMNS']
         );
 
         //if data is present at nth row, it will return array till nth row
@@ -63,7 +63,7 @@ class GoogleSheet
 
         $colDimensions = $this->googleSheetService->spreadsheets_values->batchGet(
             $spreadSheetId,
-            ['ranges' => 'Hoja1!1:1', 'majorDimension' => 'ROWS']
+            ['ranges' => $book.'!1:1', 'majorDimension' => 'ROWS']
         );
 
         //if data is present at nth col, it will return array till nth col
