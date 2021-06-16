@@ -4,6 +4,8 @@
 namespace App\Services;
 
 
+use Illuminate\Support\Facades\Log;
+
 class GoogleSheet
 {
     private $spreadSheetId;
@@ -46,6 +48,8 @@ class GoogleSheet
 
     private function getDimensions($spreadSheetId, $book)
     {
+        $bookSheet = $book.'!A:A';
+        Log::debug($bookSheet);
         $rowDimensions = $this->googleSheetService->spreadsheets_values->batchGet(
             $spreadSheetId,
             ['ranges' => $book.'!A:A', 'majorDimension' => 'COLUMNS']
