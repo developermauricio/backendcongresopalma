@@ -49,7 +49,7 @@ class SyncPoints extends Command
             ->where('id', '>', $variable->value)
             ->with('user')
             ->orderBy('id')
-            ->limit(10)
+            ->limit(100)
             ->get();
 
         if ($rows->count() === 0){

@@ -47,7 +47,7 @@ class SyncUsersEntries extends Command
         $rows = User::query()
             ->where('id', '>', $variable->value)
             ->orderBy('id')
-            ->limit(10)
+            ->limit(100)
             ->get();
 
         if ($rows->count() === 0){

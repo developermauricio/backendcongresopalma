@@ -47,7 +47,7 @@ class SyncLoginUsersEntries extends Command
         $rows = LoginUser::query()
             ->where('id', '>', $variable->value)
             ->orderBy('id')
-            ->limit(30)
+            ->limit(100)
             ->get();
 
         if ($rows->count() === 0){
