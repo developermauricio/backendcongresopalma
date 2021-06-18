@@ -24,6 +24,7 @@ Route::post('/set-login-user', 'Controller@setLoginUser')->name('api.set.login.u
 
 Route::get('/get-points-user/{email}', 'GetController@getPointsUser')->name('api.get.poinst.user');
 Route::get('/get-points-of-user/{email}', 'GetController@getPointsOfUser');
+Route::get('/get-points-ranking-users', 'GetController@getRankingPointsUsers');
 Route::get('/get-list-points-user', 'GetController@getListPointsUser');
 Route::get('/get-users-auth', 'GetController@getUsersAuth')->name('api.get.auth.user');
 

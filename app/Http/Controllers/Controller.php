@@ -39,11 +39,11 @@ class Controller extends BaseController
         //Log::debug(json_encode($currentPoints));
 
         if ($currentPoints) {
-            $dateNow = Carbon::now();
+            $dateNow = Carbon::now('America/Bogota');
             $pointExits = true;
 
             foreach($currentPoints as $point) {
-                $created_at = new Carbon($point->created_at);
+                $created_at = new Carbon($point->created_at, 'America/Bogota');
 
                 if ($dateNow->dayOfYear == $created_at->dayOfYear && $point->click_id == $request->clickId){
                     $pointExits = false;
@@ -115,31 +115,47 @@ class Controller extends BaseController
     {
         $currentEmail = $request->email;
         $currentUser = User::whereEmail($currentEmail)->first();
-        Log::debug($currentEmail);
 
         if (!$currentUser) {
-            return response()->json('No se encuentra el usuario en la base de datos');;
+            return response()->json('No se encuentra el usuario en la base de datos');
         }
-        DB::beginTransaction();
 
-        $logiUserIsset = LoginUser::whereEmail($currentEmail)->first();
+        $logiUserIsset = LoginUser::whereEmail($currentEmail)->get(); 
+        $success = false;      
+
         if ($logiUserIsset) {
-            $created_at = $logiUserIsset->created_at;
-            $dateNow = Carbon::now();
-            $created_at = new Carbon($created_at);
+            $dateNow = Carbon::now('America/Bogota');
+            $existRegister = false;
 
-            if ($dateNow->dayOfYear !== $created_at->dayOfYear){
-                $this->insertLoginUser($currentUser);
+            foreach($logiUserIsset as $user) {
+                $created_at = new Carbon($user->created_at, 'America/Bogota');
+
+                if ($dateNow->dayOfYear == $created_at->dayOfYear){
+                    $existRegister = true;
+                    break;
+                }
+            }
+            
+            if ($existRegister) {
+                //Log::debug('el dia es igual'); 
+                return response()->json('El usuario ' . $currentUser->name . ' Ya inicio sesión.');
+            } else {
+                $success = $this->insertLoginUser($currentUser);
             }
 
         } else {
-
-            $this->insertLoginUser($currentUser);
+            $success = $this->insertLoginUser($currentUser);
         }
+
+        if ($success == true) {            
+            return response()->json('La transacción se ha realizado exitosamente');
+        } else {
+            return response()->json('Error al realizar la transaccion', 500);
+        }        
     }
 
-    public function insertLoginUser($currentUser){
-        $success = true;
+    public function insertLoginUser($currentUser){        
+        DB::beginTransaction();
         try {
             $user = new LoginUser;
             $user->name = $currentUser->name;
@@ -147,17 +163,13 @@ class Controller extends BaseController
             $user->user_id = $currentUser->id;
             $user->save();
 
-        } catch (\Exception $exception) {
-            $success = $exception->getMessage();
-            DB::rollBack();
-        }
-
-        if ($success === true) {
             DB::commit();
-            return response()->json('La transacción se ha realizado exitosamente');
-        } else {
-            return response()->json('Error al realizar la transaccion', 500);
-        }
+            return true;
+
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return false;
+        }        
     }
 
 }

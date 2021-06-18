@@ -47,4 +47,17 @@ class GetController extends Controller
         return response()->json(['data' => $points]);
     }
 
+    public function getRankingPointsUsers() {
+
+        $rankingPoints = DB::table('users')
+            ->join('points', 'users.id', '=', 'points.user_id')
+            ->groupBy('user_id')
+            ->select('name', DB::raw('SUM(points) as points'))
+            ->orderBy('points', 'desc') 
+            ->limit(10)       
+            ->get();
+        
+        return response()->json(['data' => $rankingPoints]);
+    }
+
 }
