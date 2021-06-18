@@ -27,37 +27,67 @@ class Controller extends BaseController
 
     public function setPoints(Request $request)
     {
-        Log::debug('Log cuando se insertan puntos', $request);
-        return 'Llego';
-//        $success = true;
-//        $poinst = $request->points;
-//        $email = $request->email;
-//        $click = $request->idClick;
-//
-//        $currentUser = User::whereEmail($email)->first();
-//        if (!$currentUser) {
-//            return response()->json('No se encuentra el usuario en la base de datos');;
-//        }
-//
-//        DB::beginTransaction();
-//        try {
-//            $setPoints = new Point;
-//            $setPoints->points = $poinst;
-//            $setPoints->user_id = $currentUser->id;
-//            $setPoints->click_id = $click;
-//            $setPoints->save();
-//        } catch (\Exception $exception) {
-//            $success = $exception->getMessage();
-//            DB::rollBack();
-//        }
-//
-//        if ($success === true) {
-//            DB::commit();
-//            return response()->json('La transacción se ha realizado exitosamente');
-//        } else {
-//            return response()->json('Error al realizar la transaccion', 500);
-//        }
+        //Log::debug($request);
+        $ok = false;
+        $currentUser = User::whereEmail($request->email)->first();
 
+        if (!$currentUser) {
+            return response()->json(['status' => 400, 'msg' => 'El usuario no se encuentra registrado']);
+        }
+
+        $currentPoints = Point::where('user_id', $currentUser->id)->get();
+        //Log::debug(json_encode($currentPoints));
+
+        if ($currentPoints) {
+            $dateNow = Carbon::now();
+            $pointExits = true;
+
+            foreach($currentPoints as $point) {
+                $created_at = new Carbon($point->created_at);
+
+                if ($dateNow->dayOfYear == $created_at->dayOfYear && $point->click_id == $request->clickId){
+                    $pointExits = false;
+                    break;
+                }
+            }
+
+            if ($pointExits) {
+                $ok = $this->insertPoints($request, $currentUser);         
+            } else {
+                return response()->json(['status' => 400, 'msg' => 'Ya se asignaron los puntos']);
+            }
+
+        } else {
+            $ok = $this->insertPoints($request, $currentUser);            
+        }
+        
+        if ($ok) {
+            $points = Point::where('user_id', $currentUser->id)->sum('points');
+            return response()->json(['status' => 200, 'msg' => $points]);
+        } else {
+            return response()->json(['status' => 500, 'msg' => 'Error al realizar la transaccion']);
+        }
+    }
+
+    public function insertPoints($request, $currentUser) {
+        DB::beginTransaction();
+        try {
+            $setPoints = new Point;
+            $setPoints->points = $request->points;
+            $setPoints->user_id = $currentUser->id;
+            $setPoints->click_id = $request->clickId;
+            $setPoints->click_name = $request->clickName;
+            $setPoints->save();
+
+            DB::commit();
+
+            return true;
+
+        } catch (\Exception $exception) {
+            $msg = $exception->getMessage();
+            DB::rollBack();
+            return false;
+        }
     }
 
     public function setUserAuth(Request $request)
