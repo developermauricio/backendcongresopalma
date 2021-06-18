@@ -39,6 +39,11 @@ class ClickTableSeeder extends Seeder
         $click->save();
 
         $click = new Click;
+        $click->name = 'Stand Tecno Palma';
+        $click->points = 200;
+        $click->save();
+
+        $click = new Click;
         $click->name = 'Chat';
         $click->points = 100;
         $click->save();
