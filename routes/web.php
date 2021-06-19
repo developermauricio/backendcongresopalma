@@ -14,14 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function (\App\Services\GoogleSheet $googleSheet) {
-    $values = [
-      [4, 'Mauricio', 'mauricio@gmail.com']
-    ];
-    $savedData = $googleSheet->saveDataToSheet($values);
-    dump($savedData);
-   dd($googleSheet->readGoogleSheet());
-    return view('welcome');
+Route::get('/', function () {
+   return view('welcome');
 });
 
 Route::get('/api-get', function (){
