@@ -37,8 +37,8 @@ class DatabaseSeeder extends Seeder
         factory(\App\Point::class, 150)->create(
             [
                 'points' => 50,
-                'click_name' => 'TV On Deman',
-                'click_id' => 3
+                'click_name' => 'Pabellon',
+                'click_id' => 11
             ]
         );
     }
