@@ -26,11 +26,11 @@ class UserTableSeeder extends Seeder
         $user->password = 'comoquesi';
         $user->save();
 
-        $user = new User;
-        $user->name = 'susan';
-        $user->email = 'susan@gmail.com';
-        $user->password = 'comoquesi';
-        $user->save();
+//        $user = new User;
+//        $user->name = 'susan';
+//        $user->email = 'susan@gmail.com';
+//        $user->password = 'comoquesi';
+//        $user->save();
 
 
     }
