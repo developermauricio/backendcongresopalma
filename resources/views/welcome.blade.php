@@ -64,7 +64,7 @@
         </style>
     </head>
     <body>
-        <div class="flex-center position-ref full-height">
+        <!-- <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
                 <div class="top-right links">
                     @auth
@@ -95,6 +95,21 @@
                     <a href="https://github.com/laravel/laravel">GitHub</a>
                 </div>
             </div>
+        </div> -->
+        
+        <div style="text-align: center; padding: 10%;">
+            <div class="row mt-5">
+                <form action="{{ route('import.data') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="">Importar datos</label>
+                        <input type="file" name="data" class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3" style="margin-top: 1rem;">importar</button>
+                </form>
+            </div>
         </div>
+        
     </body>
 </html>

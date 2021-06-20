@@ -27,16 +27,17 @@ class Controller extends BaseController
 
     public function setPoints(Request $request)
     {
-        //Log::debug($request);
+        Log::debug($request);
         $ok = false;
         $currentUser = User::whereEmail($request->email)->first();
+        Log::debug($currentUser);
 
         if (!$currentUser) {
             return response()->json(['status' => 400, 'msg' => 'El usuario no se encuentra registrado']);
         }
 
         $currentPoints = Point::where('user_id', $currentUser->id)->get();
-        //Log::debug(json_encode($currentPoints));
+        Log::debug($currentPoints);
 
         if ($currentPoints) {
             $dateNow = Carbon::now('America/Bogota');
@@ -78,6 +79,7 @@ class Controller extends BaseController
             $setPoints->click_id = $request->clickId;
             $setPoints->click_name = $request->clickName;
             $setPoints->save();
+            Log::debug($setPoints);
 
             DB::commit();
 

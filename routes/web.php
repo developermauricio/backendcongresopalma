@@ -18,6 +18,8 @@ Route::get('/', function () {
    return view('welcome');
 });
 
+Route::post('/import-data', 'GetController@importData')->name('import.data');
+
 Route::get('/api-get', function (){
     $p = Point::query()
         ->where('id', '>', 0)

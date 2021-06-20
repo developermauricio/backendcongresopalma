@@ -8,6 +8,8 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 class GetController extends Controller
 {
@@ -58,6 +60,25 @@ class GetController extends Controller
             ->get();
         
         return response()->json(['data' => $rankingPoints]);
+    }
+
+    public function importData(Request $request) {
+        $data = $request->file('data');
+        
+        try {       
+            $user = (new FastExcel())->import( $data, function($line) {
+                return User::create([
+                    'name' => $line['name'],
+                    'email' => $line['email'],
+                    'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+                ]);
+            });
+        //} catch (\Throwable $th) {
+        } catch (\Exception $exception) {
+            return response()->json('Error al importar', $exception);
+        }
+
+        return response()->json('importacion correcta');
     }
 
 }
