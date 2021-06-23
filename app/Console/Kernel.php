@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Console\Commands\SyncLoginUsersEntries;
 use App\Console\Commands\SyncPoints;
 use App\Console\Commands\SyncUsersEntries;
+use App\Console\Commands\SyncConference;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -19,6 +20,7 @@ class Kernel extends ConsoleKernel
         SyncUsersEntries::class,
         SyncLoginUsersEntries::class,
         SyncPoints::class,
+        SyncConference::class,
     ];
 
     /**
@@ -33,6 +35,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('sync:usersentries')->everyMinute()->withoutOverlapping();
         $schedule->command('sync:loginuser')->everyMinute()->withoutOverlapping();
         $schedule->command('sync:points')->everyMinute()->withoutOverlapping();
+        $schedule->command('sync:conference')->everyMinute()->withoutOverlapping();
     }
 
     /**
