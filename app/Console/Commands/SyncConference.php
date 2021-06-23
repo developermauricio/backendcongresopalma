@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\GoConference;
+use App\Conference;
 use App\Services\GoogleSheet;
 use App\Variable;
 use Illuminate\Console\Command;
@@ -45,9 +46,14 @@ class SyncConference extends Command
             ->where('name', 'LastConferenceIDSync')
             ->first();
 
-        $rows = GoConference::query()
+        /* $rows = GoConference::query()
             ->where('id', '>', $variable->value)
             ->with('user')
+            ->orderBy('id')
+            ->limit(100)
+            ->get(); */
+        $rows = Conference::query()
+            ->where('id', '>', $variable->value)
             ->orderBy('id')
             ->limit(100)
             ->get();
@@ -62,8 +68,8 @@ class SyncConference extends Command
         Log::debug($rows);
         foreach ($rows as $row){
             $finalData->push([
-                $row->user->name,
-                $row->user->email,
+                $row->name,
+                $row->email,
                 $row->created_at,
             ]);
             $lastId = $row->id;

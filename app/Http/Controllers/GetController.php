@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AuthUser;
 use App\Point;
 use App\User;
+use App\Conference;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -70,7 +71,7 @@ class GetController extends Controller
     }
 
     public function importData(Request $request) {
-        $data = $request->file('data');
+        $data = $request->file('data');        
         
         try {       
             $user = (new FastExcel())->import( $data, function($line) {
@@ -86,6 +87,30 @@ class GetController extends Controller
         }
 
         return response()->json('importacion correcta');
+    }
+
+    public function importDataConference($data) {
+        
+        try {       
+            $conference = (new FastExcel())->import( $data, function($line) {
+                $email = $line['email'];
+                Log::debug($email); 
+                $user = User::whereEmail($email)->first();
+                Log::debug($user); 
+
+                if ($user) {
+                    return Conference::create([
+                        'name' => $user->name,
+                        'email' => $user->email,
+                    ]);
+                }                
+            });
+        } catch (\Exception $exception) {
+            Log::debug($exception); 
+            //return response()->json('Error al importar', $exception);
+        }
+
+        //return response()->json('importacion correcta');
     }
 
 }

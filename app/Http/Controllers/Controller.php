@@ -7,6 +7,7 @@ use App\LoginUser;
 use App\Point;
 use App\User;
 use App\GoConference;
+use App\Conference;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -183,13 +184,15 @@ class Controller extends BaseController
             return response()->json(['status' => 400, 'msg' => 'El usuario no se encuentra registrado']);
         }
 
-        $currentGoConference = GoConference::where('user_id', $currentUser->id)->get();
+        //$currentGoConference = GoConference::where('user_id', $currentUser->id)->get();
+        $currentConference = Conference::where('email', $currentUser->email)->get();
 
-        if ($currentGoConference) {
+
+        if ($currentConference) {
             $dateNow = Carbon::now('America/Bogota');
             $conferenceExits = true;
 
-            foreach($currentGoConference as $conference) {
+            foreach($currentConference as $conference) {
                 $created_at = new Carbon($conference->created_at, 'America/Bogota');
 
                 if ($dateNow->dayOfYear == $created_at->dayOfYear){
@@ -199,13 +202,13 @@ class Controller extends BaseController
             }
 
             if ($conferenceExits) {
-                $ok = $this->insertPoints($request, $currentUser);         
+                $ok = $this->insertGoConference($currentUser);         
             } else {
                 return response()->json(['status' => 400, 'msg' => 'Ya ingreso a la conferencia']);
             }
 
         } else {
-            $ok = $this->insertPoints($request, $currentUser);            
+            $ok = $this->insertGoConference($currentUser);            
         }
         
         if ($ok) {
@@ -215,16 +218,21 @@ class Controller extends BaseController
         }     
     }
 
-    public function insertGoConference($request, $currentUser) {
+    public function insertGoConference($currentUser) {
         DB::beginTransaction();
         try {
-            $setConference = new GoConference;
+            /* $setConference = new GoConference;
             $setConference->user_id = $currentUser->id;
             $setConference->click_name = $request->clickName;
             $setConference->date_entry = Carbon::now('America/Bogota');
+            $setConference->save(); */
+            $setConference = new Conference;
+            $setConference->name = $currentUser->name;
+            $setConference->email = $currentUser->email;
             $setConference->save();
-
+            
             DB::commit();
+            Log::debug($setConference); 
 
             return true;
 
