@@ -15,7 +15,11 @@ class GetController extends Controller
 {
     public function getPointsUser($email){
         $user = User::whereEmail($email)->first();
-        $points = Point::where('user_id', $user->id)->sum('points');
+        $points = 0;
+
+        if ($user) {
+            $points = Point::where('user_id', $user->id)->sum('points');
+        }
 
         return response()->json(['data' => $points]);
     }
@@ -39,12 +43,15 @@ class GetController extends Controller
 
     public function getPointsOfUser( $email ){
         $user = User::whereEmail($email)->first();
+        $points = [];
 
-        $points = DB::table('points')
-            ->where('user_id', $user->id)
-            ->groupBy('click_name','click_id')
-            ->select(DB::raw('click_name,SUM(points) as points'))
-            ->get();
+        if ($user) {
+            $points = DB::table('points')
+                ->where('user_id', $user->id)
+                ->groupBy('click_name','click_id')
+                ->select(DB::raw('click_name,SUM(points) as points'))
+                ->get();
+        }
 
         return response()->json(['data' => $points]);
     }

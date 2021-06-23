@@ -6,6 +6,7 @@ use App\AuthUser;
 use App\LoginUser;
 use App\Point;
 use App\User;
+use App\GoConference;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -27,17 +28,17 @@ class Controller extends BaseController
 
     public function setPoints(Request $request)
     {
-        Log::debug($request);
+        //Log::debug($request);
         $ok = false;
         $currentUser = User::whereEmail($request->email)->first();
-        Log::debug($currentUser);
+        //Log::debug($currentUser);
 
         if (!$currentUser) {
             return response()->json(['status' => 400, 'msg' => 'El usuario no se encuentra registrado']);
         }
 
         $currentPoints = Point::where('user_id', $currentUser->id)->get();
-        Log::debug($currentPoints);
+        //Log::debug($currentPoints);
 
         if ($currentPoints) {
             $dateNow = Carbon::now('America/Bogota');
@@ -172,6 +173,67 @@ class Controller extends BaseController
             DB::rollBack();
             return false;
         }        
+    }
+
+    public function goConference(Request $request) {
+        Log::debug($request); 
+        $currentUser = User::whereEmail($request->email)->first();
+
+        if (!$currentUser) {
+            return response()->json(['status' => 400, 'msg' => 'El usuario no se encuentra registrado']);
+        }
+
+        $currentGoConference = GoConference::where('user_id', $currentUser->id)->get();
+
+        if ($currentGoConference) {
+            $dateNow = Carbon::now('America/Bogota');
+            $conferenceExits = true;
+
+            foreach($currentGoConference as $conference) {
+                $created_at = new Carbon($conference->created_at, 'America/Bogota');
+
+                if ($dateNow->dayOfYear == $created_at->dayOfYear){
+                    $conferenceExits = false;
+                    break;
+                }
+            }
+
+            if ($conferenceExits) {
+                $ok = $this->insertPoints($request, $currentUser);         
+            } else {
+                return response()->json(['status' => 400, 'msg' => 'Ya ingreso a la conferencia']);
+            }
+
+        } else {
+            $ok = $this->insertPoints($request, $currentUser);            
+        }
+        
+        if ($ok) {
+            return response()->json(['status' => 200, 'msg' => 'Registro ok']);
+        } else {
+            return response()->json(['status' => 500, 'msg' => 'Error al realizar la transaccion']);
+        }     
+    }
+
+    public function insertGoConference($request, $currentUser) {
+        DB::beginTransaction();
+        try {
+            $setConference = new GoConference;
+            $setConference->user_id = $currentUser->id;
+            $setConference->click_name = $request->clickName;
+            $setConference->date_entry = Carbon::now('America/Bogota');
+            $setConference->save();
+
+            DB::commit();
+
+            return true;
+
+        } catch (\Exception $exception) {
+            $msg = $exception->getMessage();
+            Log::debug($msg); 
+            DB::rollBack();
+            return false;
+        }
     }
 
 }
