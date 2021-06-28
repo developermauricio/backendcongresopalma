@@ -6,6 +6,7 @@ use App\AuthUser;
 use App\Point;
 use App\User;
 use App\Conference;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -14,12 +15,51 @@ use Rap2hpoutre\FastExcel\FastExcel;
 
 class GetController extends Controller
 {
+    public function getDateFrom() {
+        $from = Carbon::parse("21-06-2021 06:00:00", 'America/Bogota');
+        //$from = Carbon::parse("29-06-2021 06:00:00", 'America/Bogota');
+        //$from = Carbon::parse("02-07-2021 06:00:00", 'America/Bogota');
+        //$from = Carbon::parse("06-07-2021 06:00:00", 'America/Bogota');
+        //$from = Carbon::parse("09-07-2021 06:00:00", 'America/Bogota');
+        //$from = Carbon::parse("13-07-2021 06:00:00", 'America/Bogota');
+        //$from = Carbon::parse("16-07-2021 06:00:00", 'America/Bogota');
+        //$from = Carbon::parse("20-07-2021 06:00:00", 'America/Bogota');
+        //$from = Carbon::parse("23-07-2021 06:00:00", 'America/Bogota');
+        //$from = Carbon::parse("27-07-2021 06:00:00", 'America/Bogota');
+        return $from;
+    }
+    public function getDateTo() {
+        $to = Carbon::parse("28-06-2021 18:00:00", 'America/Bogota');
+        //$to = Carbon::parse("01-07-2021 18:00:00", 'America/Bogota');
+        //$to = Carbon::parse("05-07-2021 18:00:00", 'America/Bogota');
+        //$to = Carbon::parse("08-07-2021 18:00:00", 'America/Bogota');
+        //$to = Carbon::parse("12-07-2021 18:00:00", 'America/Bogota');
+        //$to = Carbon::parse("15-07-2021 18:00:00", 'America/Bogota');
+        //$to = Carbon::parse("19-07-2021 18:00:00", 'America/Bogota');
+        //$to = Carbon::parse("22-07-2021 18:00:00", 'America/Bogota');
+        //$to = Carbon::parse("26-07-2021 18:00:00", 'America/Bogota');
+        //$to = Carbon::parse("29-07-2021 18:00:00", 'America/Bogota');
+        return $to;
+    }
+
     public function getPointsUser($email){
         $user = User::whereEmail($email)->first();
         $points = 0;
+        //Log::debug($user); 
 
         if ($user) {
-            $points = Point::where('user_id', $user->id)->sum('points');
+            $from = $this->getDateFrom();
+            $to = $this->getDateTo();
+
+            /* $points = Point::where('user_id', $user->id)
+                ->sum('points'); */
+
+            $points = Point::where('user_id', $user->id)
+                ->whereBetween('created_at', [$from, $to])
+                ->sum('points');
+                //->toSql(); // TODO: imprimir la consulta.
+            
+            //Log::debug($points); 
         }
 
         return response()->json(['data' => $points]);
@@ -47,8 +87,12 @@ class GetController extends Controller
         $points = [];
 
         if ($user) {
+            $from = $this->getDateFrom();
+            $to = $this->getDateTo();
+
             $points = DB::table('points')
                 ->where('user_id', $user->id)
+                ->whereBetween('created_at', [$from, $to])
                 ->groupBy('click_name','click_id')
                 ->select(DB::raw('click_name,SUM(points) as points'))
                 ->get();
@@ -58,17 +102,21 @@ class GetController extends Controller
     }
 
     public function getRankingPointsUsers() {
+        $from = $this->getDateFrom();
+        $to = $this->getDateTo();
 
         $rankingPoints = DB::table('users')
             ->join('points', 'users.id', '=', 'points.user_id')
+            ->whereBetween('points.created_at', [$from, $to])
             ->groupBy('user_id')
             ->select('name', DB::raw('SUM(points) as points'))
             ->orderBy('points', 'desc') 
             ->limit(10)       
             ->get();
-        
+
         return response()->json(['data' => $rankingPoints]);
     }
+
 
     public function importData(Request $request) {
         $data = $request->file('data');        
