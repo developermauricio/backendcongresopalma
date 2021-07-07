@@ -30,4 +30,7 @@ Route::get('/get-points-ranking-users', 'GetController@getRankingPointsUsers');
 Route::get('/get-list-points-user', 'GetController@getListPointsUser');
 Route::get('/get-users-auth', 'GetController@getUsersAuth')->name('api.get.auth.user');
 
+// cambiar link del eframe
+Route::get('/get-link-eframe', 'GetController@getLinkeframe');
+
 

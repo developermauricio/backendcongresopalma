@@ -16,10 +16,10 @@ use Rap2hpoutre\FastExcel\FastExcel;
 class GetController extends Controller
 {
     public function getDateFrom() {
-        $from = Carbon::parse("21-06-2021 06:00:00", 'America/Bogota');
+        //$from = Carbon::parse("21-06-2021 06:00:00", 'America/Bogota');
         //$from = Carbon::parse("29-06-2021 06:00:00", 'America/Bogota');
         //$from = Carbon::parse("02-07-2021 06:00:00", 'America/Bogota');
-        //$from = Carbon::parse("06-07-2021 06:00:00", 'America/Bogota');
+        $from = Carbon::parse("06-07-2021 06:00:00", 'America/Bogota');
         //$from = Carbon::parse("09-07-2021 06:00:00", 'America/Bogota');
         //$from = Carbon::parse("13-07-2021 06:00:00", 'America/Bogota');
         //$from = Carbon::parse("16-07-2021 06:00:00", 'America/Bogota');
@@ -29,10 +29,10 @@ class GetController extends Controller
         return $from;
     }
     public function getDateTo() {
-        $to = Carbon::parse("28-06-2021 18:00:00", 'America/Bogota');
+        //$to = Carbon::parse("28-06-2021 18:00:00", 'America/Bogota');
         //$to = Carbon::parse("01-07-2021 18:00:00", 'America/Bogota');
         //$to = Carbon::parse("05-07-2021 18:00:00", 'America/Bogota');
-        //$to = Carbon::parse("08-07-2021 18:00:00", 'America/Bogota');
+        $to = Carbon::parse("08-07-2021 18:00:00", 'America/Bogota');
         //$to = Carbon::parse("12-07-2021 18:00:00", 'America/Bogota');
         //$to = Carbon::parse("15-07-2021 18:00:00", 'America/Bogota');
         //$to = Carbon::parse("19-07-2021 18:00:00", 'America/Bogota');
@@ -159,6 +159,16 @@ class GetController extends Controller
         }
 
         //return response()->json('importacion correcta');
+    }
+
+    public function getLinkeframe() {
+       $link = 'https://vimeo.com/event/1126138/embed/a0f93f0e24';
+       //$link = 'https://www.youtube.com/embed/J6tpmNPYVhc';
+
+       //$change = 'si';
+       $change = 'no';
+
+       return response()->json(['change' => $change, 'link' => $link]);
     }
 
 }
