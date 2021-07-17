@@ -33,4 +33,9 @@ Route::get('/get-users-auth', 'GetController@getUsersAuth')->name('api.get.auth.
 // cambiar link del eframe
 Route::get('/get-link-eframe', 'GetController@getLinkeframe');
 
+Route::get('/get-points-stand', 'GetController@getListPointsStand');
+
+// certificate
+Route::post('/insert-data-certificate', 'Controller@insertDataCertificate');
+
 

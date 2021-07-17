@@ -8,6 +8,7 @@ use App\Point;
 use App\User;
 use App\GoConference;
 use App\Conference;
+use App\Certificate;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -233,6 +234,60 @@ class Controller extends BaseController
             
             DB::commit();
             Log::debug($setConference); 
+
+            return true;
+
+        } catch (\Exception $exception) {
+            $msg = $exception->getMessage();
+            Log::debug($msg); 
+            DB::rollBack();
+            return false;
+        }
+    }
+
+    public function insertDataCertificate(Request $request) {
+        $currentUser = User::whereEmail($request->email)->first();
+        $newRegister = false;
+        Log::debug($currentUser); 
+
+        if ( $currentUser ) {
+
+            $currentCertificate = Certificate::where('email_user', $currentUser->email)->first();
+            Log::debug($currentCertificate); 
+
+            if ( $currentCertificate ) {
+                if ($currentCertificate->intentos == 1) {
+                    return response()->json(['status' => 'fail', 'msg' => 'Lo sentimos usted ya genero un certificado, Comuniquese con el administrador en caso de alguna duda.']);
+                } else {
+                    $newRegister = $this->createRegisterDB($request, $currentUser);
+                }
+            } else {
+                $newRegister = $this->createRegisterDB($request, $currentUser);
+            }
+            
+        } else {
+            return response()->json(['status' => 'fail', 'msg' => 'El usuario no se encuentra registrado, por favor verifique su correo y vuelva a intentarlo.']);
+        }
+
+        if ($newRegister) {
+            return response()->json(['status' => 'ok', 'msg' => 'Muchas gracias por participar en el evento, su certificado hacido generado.']);
+        } 
+    }
+
+    public function createRegisterDB($request, $currentUser) {
+        DB::beginTransaction();
+
+        try {
+            $certificate = new Certificate;
+            $certificate->name_user = $request->name;
+            $certificate->email_user = $currentUser->email;
+            $certificate->username = $currentUser->name;
+            $certificate->intentos = 1;
+            $certificate->date_entry = Carbon::now('America/Bogota');
+            $certificate->save();
+            
+            DB::commit();
+            Log::debug($certificate); 
 
             return true;
 
